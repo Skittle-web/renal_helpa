@@ -1,0 +1,1347 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* ФИКС ДЛЯ ELECTRON: заставляем placeholder работать */
+input::placeholder,
+textarea::placeholder {
+    opacity: 1 !important;
+    color: #9ca3af !important;
+    font-family: inherit !important;
+    pointer-events: none !important; /* Важно! */
+    user-select: none !important;
+}
+
+input, textarea, select {
+    -webkit-app-region: no-drag; /* Отключаем перетаскивание окна */
+    pointer-events: auto !important;
+    background-color: white !important;
+}
+
+.app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    overflow: hidden;
+    min-height: 90vh;
+}
+
+/* Language switcher */
+.top-bar {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 100;
+}
+
+.language-switcher {
+    display: flex;
+    gap: 5px;
+    background: rgba(255,255,255,0.9);
+    padding: 5px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.lang-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #f8f9fa;
+    color: #495057;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.lang-btn:hover {
+    background: #e9ecef;
+}
+
+.lang-btn.active {
+    background: #3498db;
+    color: white;
+}
+
+/* Header and tabs */
+.header {
+    display: flex;
+    background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+    padding: 0;
+    border-bottom: 3px solid #3498db;
+}
+
+.tab-btn {
+    padding: 18px 36px;
+    background: none;
+    border: none;
+    color: #ecf0f1;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab-btn:hover {
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+
+.tab-btn.active {
+    color: white;
+    border-bottom-color: #3498db;
+    background: rgba(52, 152, 219, 0.2);
+}
+
+.tab-content {
+    display: none;
+    padding: 30px;
+    animation: fadeIn 0.3s;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Calendar */
+.calendar-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+@media (max-width: 1200px) {
+    .calendar-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.calendar-wrapper {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #e0e6ed;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.results-sidebar {
+    background: #f8fafc;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    height: fit-content;
+    position: sticky;
+    top: 30px;
+}
+
+.calendar-controls {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e0e6ed;
+    margin-bottom: 20px;
+}
+
+.primary-btn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.primary-btn:hover {
+    background: linear-gradient(135deg, #2980b9 0%, #1c6ea4 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.secondary-btn {
+    padding: 12px 24px;
+    background: #f8f9fa;
+    color: #495057;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.secondary-btn:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.small-btn {
+    padding: 8px 16px;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+/* Property cards */
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.property-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    border-left: 6px solid #3498db;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.property-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+}
+
+.property-card h3 {
+    color: #2c3e50;
+    margin-bottom: 8px;
+    font-size: 20px;
+}
+
+.property-price {
+    font-size: 22px;
+    font-weight: bold;
+    color: #27ae60;
+    margin: 10px 0;
+}
+
+.property-address {
+    color: #7f8c8d;
+    font-size: 14px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.property-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.edit-btn, .delete-btn, .view-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    flex: 1;
+    transition: all 0.2s;
+}
+
+.view-btn {
+    background: #3498db;
+    color: white;
+}
+
+.edit-btn {
+    background: #f39c12;
+    color: white;
+}
+
+.delete-btn {
+    background: #e74c3c;
+    color: white;
+}
+
+.view-btn:hover, .edit-btn:hover, .delete-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Modal windows */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 16px;
+    padding: 0;
+    z-index: 1001;
+    min-width: 500px;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: modalAppear 0.3s;
+}
+
+@keyframes modalAppear {
+    from { opacity: 0; transform: translate(-50%, -60%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+.modal-content {
+    padding: 32px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e0e6ed;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border 0.3s;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.danger-btn {
+    background: #e74c3c;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.page-header h2 {
+    color: #2c3e50;
+    font-size: 28px;
+}
+
+.add-btn {
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #27ae60 0%, #219653 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.add-btn:hover {
+    background: linear-gradient(135deg, #219653 0%, #1e8449 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
+}
+
+/* Bookings */
+.bookings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.booking-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    border-left: 5px solid #3498db;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+}
+
+.booking-dates {
+    color: #e74c3c;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.booking-guest {
+    font-weight: 600;
+    font-size: 18px;
+    margin: 5px 0;
+}
+
+.booking-property {
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+.booking-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+}
+
+/* Calendar days */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-top: 15px;
+}
+
+.day-header {
+    text-align: center;
+    padding: 10px;
+    font-weight: 600;
+    color: #2c3e50;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.calendar-day {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #e0e6ed;
+    border-radius: 6px;
+    cursor: pointer;
+    min-height: 70px;
+    background: white;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.calendar-day:hover {
+    background: #f8f9fa;
+    border-color: #3498db;
+}
+
+.calendar-day.selected {
+    background: #3498db !important;
+    color: white !important;
+    border-color: #2980b9;
+}
+
+.calendar-day.booked {
+    background: #ffebee !important;
+    color: #c62828 !important;
+    border-color: #ffcdd2;
+}
+
+.calendar-day.today {
+    border: 2px solid #e74c3c;
+}
+
+.day-number {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.day-bookings {
+    font-size: 10px;
+    margin-top: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    justify-content: center;
+}
+
+.booking-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Booked properties styles */
+.booked-property-item {
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    border: 1px solid #fc8181;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+    animation: fadeIn 0.3s;
+}
+
+.booked-property-item h5 {
+    color: #c53030;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .app-container {
+        border-radius: 0;
+        min-height: 100vh;
+        margin: -10px;
+    }
+    
+    .tab-btn {
+        padding: 15px;
+        font-size: 14px;
+        flex: 1;
+    }
+    
+    .modal {
+        min-width: 90%;
+        max-width: 90%;
+    }
+    
+    .cards-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .booking-card {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .booking-actions {
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+    
+    .top-bar {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 1000;
+    }
+    
+    .calendar-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .results-sidebar {
+        margin-top: 20px;
+    }
+}
+
+/* No results */
+.no-results {
+    padding: 30px;
+    text-align: center;
+    color: #7f8c8d;
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+.no-results p {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+/* Booked properties title */
+#booked-properties-container h4 {
+    margin: 25px 0 15px 0;
+    color: #e74c3c;
+    font-size: 18px;
+}
+
+/* Стили для поиска */
+.search-container {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e0e6ed;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 16px;
+    padding-left: 45px;
+    border: 2px solid #e0e6ed;
+    border-radius: 8px;
+    font-size: 15px;
+    background: white url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>') no-repeat 15px center;
+    background-size: 16px;
+    transition: all 0.3s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.search-input::placeholder {
+    color: #9ca3af;
+}
+
+.search-results-info {
+    margin-top: 10px;
+    padding: 10px 15px;
+    background: #f8fafc;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    font-size: 14px;
+    color: #4a5568;
+}
+
+.no-search-results {
+    text-align: center;
+    padding: 40px;
+    color: #718096;
+}
+
+.no-search-results p {
+    margin: 10px 0;
+}
+
+.highlight {
+    background-color: #fff3cd;
+    padding: 0 2px;
+    border-radius: 2px;
+    font-weight: 500;
+}
+
+/* Улучшенная подсветка */
+mark.highlight {
+    background-color: #ffeb3b;
+    padding: 0 2px;
+    border-radius: 3px;
+    font-weight: 600;
+    color: #333;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { background-color: #ffeb3b; }
+    50% { background-color: #ffd54f; }
+    100% { background-color: #ffeb3b; }
+}
+
+/* Эффект при поиске */
+.searching .property-card:not(:has(mark)),
+.searching .booking-card:not(:has(mark)) {
+    opacity: 0.3;
+    transition: opacity 0.3s;
+}
+
+.searching .property-card:has(mark),
+.searching .booking-card:has(mark) {
+    border: 2px solid #ffeb3b;
+    box-shadow: 0 0 15px rgba(255, 235, 59, 0.3);
+}
+
+
+.highlight {
+    background-color: #ffeb3b;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+.no-search-results {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.no-search-results h4 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.search-results-info {
+    background: #f8f9fa;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+
+/* Новые стили для гольф-машин */
+.golf-cart-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    border-left: 6px solid #FF9800;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.golf-cart-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+}
+
+.golf-cart-card h3 {
+    color: #2c3e50;
+    margin-bottom: 8px;
+    font-size: 20px;
+}
+
+/* Стили для очень важных объектов */
+.important-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #ff0000;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    animation: pulse-important 1.5s infinite;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+.important-badge-small {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #ff0000;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    animation: pulse-important 1.5s infinite;
+}
+
+@keyframes pulse-important {
+    0% { background-color: #ff0000; transform: scale(1); }
+    50% { background-color: #ff4444; transform: scale(1.1); box-shadow: 0 0 15px rgba(255, 0, 0, 0.8); }
+    100% { background-color: #ff0000; transform: scale(1); }
+}
+
+.important-checkbox {
+    background: #fff3f3;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #ffcdd2;
+    margin-bottom: 20px;
+}
+
+.important-label {
+    color: #d32f2f;
+    font-weight: bold;
+    font-size: 16px;
+    margin-left: 8px;
+}
+
+/* Стили для депозита */
+.deposit-info {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+.deposit-paid {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+.deposit-not-paid {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+/* Стили для политики отмены */
+.cancellation-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.cancellation-free {
+    background: #e8f5e9;
+    color: #27ae60;
+}
+
+.cancellation-paid {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.cancellation-partial {
+    background: #fff3e0;
+    color: #ef6c00;
+}
+
+.cancellation-non-refundable {
+    background: #f3e5f5;
+    color: #6a1b9a;
+}
+
+/* Доступные карточки в календаре */
+.available-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.available-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+/* Чекбокс группа */
+.checkbox-group {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* Стили для занятых гольф-машин */
+.booked-golf-cart-item {
+    background: linear-gradient(135deg, #fff5e6 0%, #ffe0b2 100%);
+    border: 1px solid #ffb74d;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+/* Кнопка для гольф-машин */
+.golf-cart-btn {
+    background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+    color: white;
+    border: none;
+}
+
+.golf-cart-btn:hover {
+    background: linear-gradient(135deg, #F57C00 0%, #EF6C00 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 768px) {
+    .golf-cart-card {
+        padding: 20px;
+    }
+    
+    .important-badge {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+    }
+    
+    .deposit-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Стили для отображения цены */
+.booking-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #27ae60;
+    margin: 10px 0;
+}
+
+/* Иконки для разных типов */
+.item-type-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 14px;
+    margin-right: 8px;
+}
+
+.item-type-property {
+    background: #e8f5e9;
+    color: #27ae60;
+}
+
+.item-type-golf-cart {
+    background: #fff3e0;
+    color: #FF9800;
+}
+
+/* ===== НОВЫЕ СТИЛИ ДЛЯ КНОПКИ "ОЧЕНЬ ВАЖНО" ===== */
+
+/* Контейнер для важной информации */
+.important-container {
+    background: #fff3f3;
+    padding: 16px 20px;
+    border-radius: 12px;
+    border: 2px solid #ffcdd2;
+    margin-bottom: 24px;
+    transition: all 0.3s ease;
+}
+
+.important-container:hover {
+    background: #ffeeee;
+    border-color: #ff8a80;
+}
+
+/* Лейбл для чекбокса */
+.important-label {
+    color: #d32f2f;
+    font-weight: 700;
+    font-size: 16px;
+    margin-left: 8px;
+    letter-spacing: 0.5px;
+}
+
+/* Текстовое поле для важного сообщения */
+.important-textarea {
+    margin-top: 12px;
+    border: 2px solid #ffcdd2;
+    background: #fff9f9;
+    resize: vertical;
+    font-size: 14px;
+    line-height: 1.5;
+    transition: all 0.2s;
+}
+
+.important-textarea:focus {
+    border-color: #ff0000;
+    box-shadow: 0 0 0 4px rgba(255, 0, 0, 0.1);
+    outline: none;
+    background: white;
+}
+
+/* КНОПКА-ИКОНКА "ОЧЕНЬ ВАЖНО" (БОЛЬШАЯ) */
+.important-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #ff0000;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    animation: pulse-important 1.8s infinite;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid white;
+}
+
+.important-badge:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.9);
+    background: #ff4444;
+}
+
+/* КНОПКА-ИКОНКА МАЛЕНЬКАЯ (для броней и компактных мест) */
+.important-badge-small {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #ff0000;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    animation: pulse-important 1.8s infinite;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1.5px solid white;
+}
+
+.important-badge-small:hover {
+    transform: scale(1.25);
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+    background: #ff4444;
+}
+
+/* АНИМАЦИЯ ПУЛЬСАЦИИ */
+@keyframes pulse-important {
+    0% { 
+        background-color: #ff0000; 
+        transform: scale(1); 
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+    }
+    50% { 
+        background-color: #ff3333; 
+        transform: scale(1.08); 
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
+    }
+    100% { 
+        background-color: #ff0000; 
+        transform: scale(1); 
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+    }
+}
+
+/* МОДАЛЬНОЕ ОКНО ДЛЯ ВАЖНОГО СООБЩЕНИЯ */
+.important-modal-content {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    max-width: 550px;
+    border-top: 10px solid #ff0000;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+}
+
+.important-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.important-modal-icon {
+    background: #ff0000;
+    color: white;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 26px;
+    animation: pulse-important 1.8s infinite;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+}
+
+.important-modal-title {
+    margin: 0;
+    color: #d32f2f;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.important-modal-message {
+    background: #fff8f8;
+    border-left: 8px solid #ff0000;
+    padding: 22px;
+    border-radius: 12px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #2c3e50;
+    white-space: pre-wrap;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.02);
+    margin-bottom: 24px;
+}
+
+/* Подсветка важных объектов в календаре */
+.calendar-day .booking-dot.important {
+    border: 2px solid #ff0000;
+    animation: pulse-important 1.8s infinite;
+    width: 10px;
+    height: 10px;
+}
+
+/* Красная полоса для важных карточек */
+.property-card.important,
+.golf-cart-card.important,
+.booking-card.important {
+    border-left-width: 10px !important;
+    border-left-color: #ff0000 !important;
+    position: relative;
+}
+
+.property-card.important::after,
+.golf-cart-card.important::after,
+.booking-card.important::after {
+    content: "❗";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    color: #ff0000;
+    animation: pulse-important 1.8s infinite;
+    opacity: 0.9;
+}
+
+/* Кнопка закрытия модалки важного сообщения */
+.important-modal-close-btn {
+    padding: 12px 32px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.important-modal-close-btn:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(231, 76, 60, 0.4);
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 768px) {
+    .important-badge {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+    
+    .important-badge-small {
+        width: 24px;
+        height: 24px;
+        font-size: 13px;
+    }
+    
+    .important-modal-content {
+        padding: 20px;
+        margin: 0 15px;
+    }
+    
+    .important-modal-title {
+        font-size: 20px;
+    }
+    
+    .important-modal-message {
+        padding: 16px;
+        font-size: 15px;
+    }
+}
+
+/* Стили для чекбокса "ОЧЕНЬ ВАЖНО" */
+.important-container input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #ff0000;
+    border-radius: 6px;
+}
+
+.important-container input[type="checkbox"]:checked {
+    background-color: #ff0000;
+    border-color: #ff0000;
+}
+
+/* Дополнительная анимация при наведении на важную карточку */
+.property-card:has(.important-badge):hover,
+.golf-cart-card:has(.important-badge):hover,
+.booking-card:has(.important-badge-small):hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 30px rgba(255, 0, 0, 0.15);
+}
+
+/* Подсветка выбранного диапазона в календаре */
+.calendar-day.in-range {
+    background: #e3f2fd !important;
+    border-color: #90caf9 !important;
+}
+
+.calendar-day.selected {
+    background: #2196f3 !important;
+    color: white !important;
+    border-color: #1976d2 !important;
+    font-weight: bold;
+}
+
+.calendar-day.selected .day-number {
+    color: white;
+}
+
+.calendar-day.in-range .day-number {
+    color: #1976d2;
+    font-weight: 500;
+}
+
+/* Улучшенный блок с выбранными датами */
+#selected-dates-info {
+    transition: all 0.3s ease;
+    border: 1px solid #bbdefb;
+}
+
+#selected-dates-info:hover {
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Анимация для подсветки */
+@keyframes range-highlight {
+    0% { background-color: #e3f2fd; }
+    50% { background-color: #bbdefb; }
+    100% { background-color: #e3f2fd; }
+}
+
+.calendar-day.in-range {
+    animation: range-highlight 2s infinite;
+}
+
+
+/* Панель авторизации */
+.auth-bar {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    padding: 10px 20px;
+    border-bottom: 2px solid #3498db;
+}
+
+.auth-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.auth-input {
+    padding: 8px 12px;
+    border: 1px solid #fff;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.9);
+    font-size: 14px;
+    width: 200px;
+}
+
+.auth-input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52,152,219,0.3);
+}
+
+.auth-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background: #3498db;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.auth-btn:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+}
+
+.auth-btn.register {
+    background: #27ae60;
+}
+
+.auth-btn.register:hover {
+    background: #219653;
+}
+
+#user-email-display {
+    font-weight: 500;
+    background: rgba(255,255,255,0.1);
+    padding: 5px 15px;
+    border-radius: 20px;
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 768px) {
+    .auth-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    #auth-logged-out {
+        flex-direction: column;
+    }
+    
+    .auth-input {
+        width: 100%;
+    }
+}

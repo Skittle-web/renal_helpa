@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Менеджер аренды жилья и гольф-машин</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Language switcher -->
+    <div class="top-bar">
+        <div class="language-switcher">
+            <button id="lang-ru" class="lang-btn active">🇷🇺 Рус</button>
+            <button id="lang-en" class="lang-btn">🇬🇧 Eng</button>
+        </div>
+        <!-- Панель авторизации -->
+        <div class="auth-bar">
+            <div class="auth-container">
+                <div id="auth-logged-out" style="display: flex; gap: 10px;">
+                    <input type="email" id="login-email" placeholder="Email" class="auth-input">
+                    <input type="password" id="login-password" placeholder="Пароль" class="auth-input">
+                    <button id="login-btn" class="auth-btn">Войти</button>
+                    <button id="register-btn" class="auth-btn register">Регистрация</button>
+                </div>
+                <div id="auth-logged-in" style="display: none; align-items: center; gap: 15px;">
+                    <span id="user-email-display" style="color: white;"></span>
+                    <button id="logout-btn" class="auth-btn">Выйти</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="app-container">
+        <!-- Верхнее меню -->
+        <div class="header">
+            <button class="tab-btn active" data-tab="calendar">Календарь</button>
+            <button class="tab-btn" data-tab="properties">Жилье</button>
+            <button class="tab-btn" data-tab="golf-carts">Гольф-машины</button>
+            <button class="tab-btn" data-tab="bookings">Все брони</button>
+        </div>
+
+        <!-- Вкладка Календарь -->
+        <div id="calendar-tab" class="tab-content active">
+            <div class="calendar-controls">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" id="date-range" placeholder="Выберите даты..." style="flex: 1;">
+                    <button id="check-availability" class="primary-btn">Показать свободные</button>
+                    <button id="clear-selection" class="secondary-btn">Очистить</button>
+                </div>
+                <div class="search-container" style="margin-bottom: 20px;">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="text" id="calendar-search" class="search-input" 
+                               placeholder="🔍 Поиск по названию, описанию, адресу, гостю...">
+                        <button id="clear-calendar-search" class="secondary-btn" style="display: none;">✕</button>
+                    </div>
+                    <div id="calendar-search-results" style="margin-top: 5px; font-size: 13px; color: #666;"></div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <button id="prev-month" class="small-btn">◀</button>
+                    <span id="current-month" style="margin: 0 15px; font-weight: bold;"></span>
+                    <button id="next-month" class="small-btn">▶</button>
+                </div>
+            </div>
+            
+            <div class="calendar-container">
+                <div class="calendar-wrapper">
+                    <div id="calendar"></div>
+                </div>
+                
+                <div class="results-sidebar">
+                    <div id="selected-dates-info" style="margin-top: 20px; padding: 10px; background: #f5f5f5; border-radius: 5px;">
+                        <small>Выберите даты в календаре или в поле выше</small>
+                    </div>
+                    <h3 id="available-title">Свободное жилье:</h3>
+                    <div id="available-properties" class="properties-list"></div>
+                    <div id="available-golf-carts" class="properties-list" style="margin-top: 20px;"></div>
+                    
+                    <div id="booked-properties-container"></div>
+                    
+                    
+                </div>
+            </div>
+        </div>
+
+        <!-- Вкладка Жилье -->
+        <div id="properties-tab" class="tab-content">
+            <div class="page-header">
+                <h2 id="manage-properties-title">Управление жильем</h2>
+                <button id="add-property" class="add-btn">+ Добавить жилье</button>
+            </div>
+
+            <div class="search-container" style="margin-bottom: 20px;">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" id="properties-search" class="search-input" 
+                           placeholder="🔍 Поиск по названию, описанию, адресу...">
+                    <button id="clear-properties-search" class="secondary-btn" style="display: none;">✕</button>
+                </div>
+                <div id="properties-search-results" style="margin-top: 5px; font-size: 13px; color: #666;"></div>
+            </div>
+
+            <div id="properties-list" class="cards-container"></div>
+        </div>
+
+        <!-- Вкладка Гольф-машины -->
+        <div id="golf-carts-tab" class="tab-content">
+            <div class="page-header">
+                <h2>Управление гольф-машинами</h2>
+                <button id="add-golf-cart" class="add-btn">+ Добавить гольф-машину</button>
+            </div>
+
+            <div class="search-container" style="margin-bottom: 20px;">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" id="golf-carts-search" class="search-input" 
+                           placeholder="🔍 Поиск по названию, хозяину, описанию...">
+                    <button id="clear-golf-carts-search" class="secondary-btn" style="display: none;">✕</button>
+                </div>
+                <div id="golf-carts-search-results" style="margin-top: 5px; font-size: 13px; color: #666;"></div>
+            </div>
+
+            <div id="golf-carts-list" class="cards-container"></div>
+        </div>
+
+        <!-- Вкладка Все брони -->
+        <div id="bookings-tab" class="tab-content">
+            <div class="page-header">
+                <h2 id="all-bookings-title">Все бронирования</h2>
+                <button id="add-booking" class="add-btn">+ Новая бронь</button>
+            </div>
+
+            <div class="search-container" style="margin-bottom: 20px;">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" id="bookings-search" class="search-input" 
+                           placeholder="🔍 Поиск по названию, гостю, хозяину...">
+                    <button id="clear-bookings-search" class="secondary-btn" style="display: none;">✕</button>
+                </div>
+                <div id="bookings-search-results" style="margin-top: 5px; font-size: 13px; color: #666;"></div>
+            </div>
+
+            <div id="all-bookings" class="bookings-container"></div>
+        </div>
+    </div>
+
+    <!-- Модальные окна -->
+    <div id="modal-overlay" class="modal-overlay" style="display: none;"></div>
+    
+    <!-- Модалка добавления жилья -->
+    <div id="property-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3 id="modal-title">Добавить жилье</h3>
+            <div class="form-group">
+                <label>Название:</label>
+                <input type="text" id="property-name" class="form-input" placeholder="Например: Квартира в центре">
+            </div>
+            <div class="form-group">
+                <label>Описание:</label>
+                <textarea id="property-description" class="form-input" rows="3" placeholder="Описание, особенности..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Адрес:</label>
+                <input type="text" id="property-address" class="form-input" placeholder="Полный адрес">
+            </div>
+            <div class="form-group">
+                <label>Цвет в календаре:</label>
+                <input type="color" id="property-color" value="#4CAF50">
+            </div>
+            
+            <!-- Кнопка "ОЧЕНЬ ВАЖНО" с текстовым полем -->
+            <div class="form-group important-container">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="property-important"> 
+                        <span class="important-label">❗ ОЧЕНЬ ВАЖНОЕ ЖИЛЬЕ</span>
+                    </label>
+                </div>
+                <textarea 
+                    id="property-important-text" 
+                    class="form-input important-textarea" 
+                    rows="2" 
+                    placeholder="Что важно? Например: Идет ремонт, не предлагать к бронированию, особые условия..."
+                    style="display: none;"
+                ></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button id="save-property" class="primary-btn">Сохранить</button>
+                <button id="cancel-property" class="secondary-btn">Отмена</button>
+                <button id="delete-property" class="danger-btn" style="display: none;">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка добавления гольф-машины -->
+    <div id="golf-cart-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Добавить гольф-машину</h3>
+            <div class="form-group">
+                <label>Название / Модель:</label>
+                <input type="text" id="golf-cart-name" class="form-input" placeholder="Например: Yamaha Drive2">
+            </div>
+            <div class="form-group">
+                <label>Хозяин:</label>
+                <input type="text" id="golf-cart-owner" class="form-input" placeholder="ФИО владельца">
+            </div>
+            <div class="form-group">
+                <label>Количество мест:</label>
+                <input type="number" id="golf-cart-seats" class="form-input" placeholder="2 или 4" min="1" max="8">
+            </div>
+            <div class="form-group">
+                <label>Описание / Характеристики:</label>
+                <textarea id="golf-cart-description" class="form-input" rows="3" placeholder="Состояние, особенности..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Цвет в календаре:</label>
+                <input type="color" id="golf-cart-color" value="#FF9800">
+            </div>
+
+            <!-- Кнопка "ОЧЕНЬ ВАЖНО" с текстовым полем -->
+            <div class="form-group important-container">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="golf-cart-important"> 
+                        <span class="important-label">❗ ОЧЕНЬ ВАЖНАЯ МАШИНА</span>
+                    </label>
+                </div>
+                <textarea 
+                    id="golf-cart-important-text" 
+                    class="form-input important-textarea" 
+                    rows="2" 
+                    placeholder="Что важно? Например: Технические проблемы, только для опытных водителей..."
+                    style="display: none;"
+                ></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button id="save-golf-cart" class="primary-btn">Сохранить</button>
+                <button id="cancel-golf-cart" class="secondary-btn">Отмена</button>
+                <button id="delete-golf-cart" class="danger-btn" style="display: none;">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка бронирования -->
+    <div id="booking-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3 id="booking-modal-title">Новое бронирование</h3>
+            <div class="form-group">
+                <label id="booking-type-label">Тип:</label>
+                <select id="booking-type" class="form-input">
+                    <option value="property">Жилье</option>
+                    <option value="golf-cart">Гольф-машина</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label id="booking-item-label">Объект:</label>
+                <select id="booking-item" class="form-input"></select>
+            </div>
+            <div class="form-group">
+                <label>Дата начала:</label>
+                <input type="date" id="booking-start" class="form-input">
+            </div>
+            <div class="form-group">
+                <label>Дата окончания:</label>
+                <input type="date" id="booking-end" class="form-input">
+            </div>
+            <div class="form-group">
+                <label>Имя гостя:</label>
+                <input type="text" id="booking-guest" class="form-input" placeholder="ФИО гостя">
+            </div>
+            <div class="form-group">
+                <label>Телефон:</label>
+                <input type="tel" id="booking-phone" class="form-input" placeholder="+7 999 123-45-67">
+            </div>
+            <div class="form-group">
+                <label>Примечания:</label>
+                <textarea id="booking-notes" class="form-input" rows="3" placeholder="Дополнительная информация"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Цена брони:</label>
+                <input type="number" id="booking-price" class="form-input" placeholder="Общая стоимость">
+            </div>
+            <div class="form-group">
+                <label>Депозит:</label>
+                <input type="number" id="booking-deposit" class="form-input" placeholder="Сумма депозита">
+            </div>
+            <div class="form-group checkbox-group">
+                <label>
+                    <input type="checkbox" id="booking-deposit-paid"> 
+                    <span>Депозит внесен</span>
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Политика отмены:</label>
+                <select id="booking-cancellation" class="form-input">
+                    <option value="free">Бесплатная отмена</option>
+                    <option value="paid">Платная отмена</option>
+                    <option value="partial">Частичная компенсация</option>
+                    <option value="non-refundable">Невозвратный тариф</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Срок бесплатной отмены:</label>
+                <input type="text" id="booking-free-cancel-until" class="form-input" placeholder="Например: за 7 дней до заезда">
+            </div>
+            <div class="modal-actions">
+                <button id="save-booking" class="primary-btn">Сохранить</button>
+                <button id="cancel-booking" class="secondary-btn">Отмена</button>
+                <button id="delete-booking" class="danger-btn" style="display: none;">Удалить бронь</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Скрытый input для импорта файлов -->
+    <input type="file" id="import-file" accept=".json" style="display: none;">
+
+    <!-- Вместо старых скриптов, оставьте только это: -->
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
