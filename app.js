@@ -1,5 +1,5 @@
-import { db, auth } from './firebase-config.js';
-import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { db, auth, onAuthStateChanged } from './firebase-config.js';
+
 
 
 class RentalApp {
